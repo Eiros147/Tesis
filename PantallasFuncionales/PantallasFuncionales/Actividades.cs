@@ -8,15 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace PantallasFuncionales
 {
     public partial class Actividades : Form
     {
         DataTable dtDatos;
-        MySqlDataAdapter datos, datosUpdate;
+        SqlDataAdapter datos, datosUpdate;
         int selectedRow;
-        MySqlCommandBuilder dtBuild;
+        SqlCommandBuilder dtBuild;
         DataSet ds;
 
         public Actividades()
@@ -24,7 +27,7 @@ namespace PantallasFuncionales
             InitializeComponent();
         }
 
-        MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+        SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -78,19 +81,19 @@ namespace PantallasFuncionales
             if (txtBusqueda.Text.Length > 0)
             {
                 string cadena = ("SELECT actID, actNombre, actDescripcion, actCosto FROM actividad Where actID Like '" + txtBusqueda.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else if (txtBusquedaNombre.Text.Length > 0)
             {
                 string cadena = ("SELECT actID, actNombre, actDescripcion, actCosto FROM actividad Where actNombre Like '" + txtBusquedaNombre.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else
             {
                 string cadena = ("SELECT actID, actNombre, actDescripcion, actCosto FROM actividad Where actNombre Like '" + txtBusquedaNombre.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             dataGridView1.DataSource = dtDatos;
@@ -99,7 +102,7 @@ namespace PantallasFuncionales
         void borrar()
         {
             conexion.Open();
-            MySqlCommand cmd;
+            SqlCommand cmd;
             foreach (DataGridViewRow item in dataGridView1.Rows)
             {
                 if (item.Cells[0].Value != null)
@@ -107,8 +110,8 @@ namespace PantallasFuncionales
                 {
                     //MessageBox.Show("Lineas seleccionadas:" + item.Cells[4].RowIndex.ToString());
                     string cadenaBorrar = ("Delete From actividad Where actID ='" + item.Cells[1].Value.ToString() + "'");
-                    dtBuild = new MySqlCommandBuilder(datos);
-                    cmd = new MySqlCommand(cadenaBorrar, conexion);
+                    dtBuild = new SqlCommandBuilder(datos);
+                    cmd = new SqlCommand(cadenaBorrar, conexion);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -140,7 +143,7 @@ namespace PantallasFuncionales
 
             dtDatos = new DataTable();
 
-            datos = new MySqlDataAdapter(cadenaSelect, conexion);
+            datos = new SqlDataAdapter(cadenaSelect, conexion);
 
             datos.Fill(dtDatos);
 
@@ -164,7 +167,7 @@ namespace PantallasFuncionales
         void guardar()
         {
             conexion.Open();
-            MySqlCommand cmd;
+            SqlCommand cmd;
             foreach (DataGridViewRow item in dataGridView1.Rows)
             {
                 if (item.Cells[0].Value != null)
@@ -172,8 +175,8 @@ namespace PantallasFuncionales
                     {
                         //MessageBox.Show("Lineas seleccionadas:" + item.Cells[4].RowIndex.ToString());
                         string cadenaNuevo = ("INSERT INTO actividad (actID, actNombre, actDescripcion, actCosto) VALUES('" + item.Cells[1].Value.ToString() + "','" + item.Cells[2].Value.ToString() + "','" + item.Cells[3].Value.ToString() + "','" + item.Cells[4].Value.ToString() + "')");
-                        dtBuild = new MySqlCommandBuilder(datos);
-                        cmd = new MySqlCommand(cadenaNuevo, conexion);
+                        dtBuild = new SqlCommandBuilder(datos);
+                        cmd = new SqlCommand(cadenaNuevo, conexion);
                         cmd.ExecuteNonQuery();
                     }
             }
@@ -184,7 +187,7 @@ namespace PantallasFuncionales
         void update()
         {
             conexion.Open();
-            MySqlCommand cmd;
+            SqlCommand cmd;
             foreach (DataGridViewRow item in dataGridView1.Rows)
             {
                 if (item.Cells[0].Value != null)
@@ -192,8 +195,8 @@ namespace PantallasFuncionales
                     {
                         //MessageBox.Show("Lineas seleccionadas:" + item.Cells[4].RowIndex.ToString());
                         string cadenaActualizar = ("UPDATE actividad SET actNombre ='" + item.Cells[2].Value.ToString() + "', actDescripcion ='" + item.Cells[3].Value.ToString() + "', actCosto ='" + item.Cells[4].Value.ToString() + "' WHERE actID ='" + item.Cells[1].Value.ToString() + "')");
-                        dtBuild = new MySqlCommandBuilder(datos);
-                        cmd = new MySqlCommand(cadenaActualizar, conexion);
+                        dtBuild = new SqlCommandBuilder(datos);
+                        cmd = new SqlCommand(cadenaActualizar, conexion);
                         cmd.ExecuteNonQuery();
                     }
             }

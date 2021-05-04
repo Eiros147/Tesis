@@ -11,6 +11,9 @@ using MySql.Data.MySqlClient;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.CvEnum;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace PantallasFuncionales
 {
@@ -18,9 +21,9 @@ namespace PantallasFuncionales
     public partial class Socio : Form
     {
         DataTable dtDatos;
-        MySqlDataAdapter datos, datosUpdate;
+        SqlDataAdapter datos, datosUpdate;
         int selectedRow;
-        MySqlCommandBuilder dtBuild;
+        SqlCommandBuilder dtBuild;
         DataSet ds;
 
         public Socio()
@@ -28,7 +31,7 @@ namespace PantallasFuncionales
             InitializeComponent();
         }
 
-        MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+        SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
 
         private void Socio_Load(object sender, EventArgs e)
         {
@@ -41,7 +44,7 @@ namespace PantallasFuncionales
 
             dtDatos = new DataTable();
 
-            datos = new MySqlDataAdapter(cadenaSelect, conexion);
+            datos = new SqlDataAdapter(cadenaSelect, conexion);
 
             datos.Fill(dtDatos);
 
@@ -66,19 +69,19 @@ namespace PantallasFuncionales
             if (txtID.Text.Length > 0)
             {
                 string cadena = ("SELECT socID, socDNI, socNombre, socDireccion, socTelefono, socActividades, socEstado FROM socio Where socID Like '" + txtID.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else if (txtDNI.Text.Length > 0)
             {
                 string cadena = ("SELECT socID, socDNI, socNombre, socDireccion, socTelefono, socActividades, socEstado FROM socio Where socDNI Like '" + txtDNI.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else
             {
                 string cadena = ("SELECT socID, socDNI, socNombre, socDireccion, socTelefono, socActividades, socEstado FROM socio Where socNombre Like '" + txtNombre.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             dataGridView1.DataSource = dtDatos;
@@ -87,7 +90,7 @@ namespace PantallasFuncionales
         void borrar()
         {
             conexion.Open();
-            MySqlCommand cmd;
+            SqlCommand cmd;
             foreach (DataGridViewRow item in dataGridView1.Rows)
             {
                 if (item.Cells[0].Value != null)
@@ -95,8 +98,8 @@ namespace PantallasFuncionales
                 {
                     //MessageBox.Show("Lineas seleccionadas:" + item.Cells[7].RowIndex.ToString());
                     string cadenaBorrar = ("Delete From socio Where socID ='" + item.Cells[1].Value.ToString() + "'");
-                    dtBuild = new MySqlCommandBuilder(datos);
-                    cmd = new MySqlCommand(cadenaBorrar, conexion);
+                    dtBuild = new SqlCommandBuilder(datos);
+                    cmd = new SqlCommand(cadenaBorrar, conexion);
                     cmd.ExecuteNonQuery();
                 }
             }

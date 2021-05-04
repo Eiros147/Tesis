@@ -8,15 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace PantallasFuncionales
 {
     public partial class Empleado : Form
     {
         DataTable dtDatos;
-        MySqlDataAdapter datos, datosUpdate;
+        SqlDataAdapter datos, datosUpdate;
         int selectedRow;
-        MySqlCommandBuilder dtBuild;
+        SqlCommandBuilder dtBuild;
         DataSet ds;
 
         public Empleado()
@@ -24,7 +27,7 @@ namespace PantallasFuncionales
             InitializeComponent();
         }
 
-        MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+        SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
 
         private void Empleado_Load(object sender, EventArgs e)
         {
@@ -51,7 +54,7 @@ namespace PantallasFuncionales
 
             dtDatos = new DataTable();
 
-            datos = new MySqlDataAdapter(cadenaSelect, conexion);
+            datos = new SqlDataAdapter(cadenaSelect, conexion);
 
             datos.Fill(dtDatos);
 
@@ -73,7 +76,7 @@ namespace PantallasFuncionales
         void borrar()
         {
             conexion.Open();
-            MySqlCommand cmd;
+            SqlCommand cmd;
             foreach (DataGridViewRow item in dataGridView1.Rows)
             {
                 if (item.Cells[0].Value != null)
@@ -81,8 +84,8 @@ namespace PantallasFuncionales
                     {
                         //MessageBox.Show("Lineas seleccionadas:" + item.Cells[4].RowIndex.ToString());
                         string cadenaBorrar = ("Delete From empleado Where empID ='" + item.Cells[1].Value.ToString() + "'");
-                        dtBuild = new MySqlCommandBuilder(datos);
-                        cmd = new MySqlCommand(cadenaBorrar, conexion);
+                        dtBuild = new SqlCommandBuilder(datos);
+                        cmd = new SqlCommand(cadenaBorrar, conexion);
                         cmd.ExecuteNonQuery();
                     }
             }
@@ -116,19 +119,19 @@ namespace PantallasFuncionales
             if (txtID.Text.Length > 0)
             {
                 string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM empleado Where empID Like '" + txtID.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else if (txtNombre.Text.Length > 0)
             {
                 string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM empleado Where empNombre Like '" + txtNombre.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else
             {
                 string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM empleado Where empApellido Like '" + txtApellido.Text + "%'");
-                MySqlDataAdapter data = new MySqlDataAdapter(cadena, conexion);
+                SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             dataGridView1.DataSource = dtDatos;
