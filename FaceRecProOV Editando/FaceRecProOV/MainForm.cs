@@ -19,6 +19,9 @@ using MySql.Data.MySqlClient;
 using System.Data;
 using System.Web;
 using ConnectCsharpToMysql;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace MultiFaceRec
 {
@@ -42,9 +45,9 @@ namespace MultiFaceRec
 
         
         int selectedRow;
-        MySqlCommandBuilder dtBuild;
+        SqlCommandBuilder dtBuild;
         
-        MySqlDataReader lector, lectorPrimero, lectorSelect;
+        SqlDataReader lector, lectorPrimero, lectorSelect;
 
         
 
@@ -53,8 +56,8 @@ namespace MultiFaceRec
         {
             DataTable dtDatos;
             DataSet ds;
-            MySqlDataAdapter datos, datosUpdate;
-            MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+            SqlDataAdapter datos, datosUpdate;
+            SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
             conexion.Open();
             InitializeComponent();
             //Load haarcascades for face detection
@@ -73,7 +76,7 @@ namespace MultiFaceRec
 
                     string cadenaSelect = "SELECT * FROM socio WHERE socDNI = " + ContTrain;
                     
-                    MySqlCommand comando = new MySqlCommand(cadenaSelect, conexion);
+                    SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
                     lectorPrimero = comando.ExecuteReader();
                     if (lectorPrimero.Read())
                     {
@@ -171,13 +174,13 @@ namespace MultiFaceRec
                    // File.AppendAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt", "\n" + labels.ToArray()[0] + "%");
                 DataTable dtDatos;
                 DataSet ds;
-                MySqlDataAdapter datos, datosUpdate;
-                MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+                SqlDataAdapter datos, datosUpdate;
+                SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
                 conexion.Open();
-                    MySqlCommand cmd;
+                SqlCommand cmd;
 
                 string cadenaSelect = "SELECT socNombre FROM socio WHERE socDNI = '" + txtDNI.Text.ToString() + "'";
-                MySqlCommand comando = new MySqlCommand(cadenaSelect, conexion);
+                SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
                 lector = comando.ExecuteReader();
                 ////if (lector.Read())
                 ////{
@@ -192,13 +195,13 @@ namespace MultiFaceRec
                 if (lector.HasRows)
                         {
                             string cadenaUpdate = ("UPDATE socio SET socDNI = '" + txtDNI.Text.ToString() + "', socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = '" + txtTelefono.Text.ToString() + "' WHERE socDni = '" + txtDNI.Text.ToString() + "'");
-                            cmd = new MySqlCommand(cadenaUpdate, conexion);
+                            cmd = new SqlCommand(cadenaUpdate, conexion);
                             cmd.ExecuteNonQuery();
                         }
                         else
                         {                            
                             string cadenaNuevo = ("INSERT INTO socio (socDNI, socNombre, socDireccion, socTelefono) VALUES('" + txtDNI.Text.ToString() + "','" + textBox1.Text.ToString() + "','" + txtDireccion.Text.ToString() + "','" + txtTelefono.Text.ToString() + "') WHERE socDni = '" + txtDNI.Text.ToString() + "'");
-                            cmd = new MySqlCommand(cadenaNuevo, conexion);
+                            cmd = new SqlCommand(cadenaNuevo, conexion);
                             cmd.ExecuteNonQuery();
                         }
                 //}
@@ -321,12 +324,12 @@ namespace MultiFaceRec
             
             DataTable dtDatos;
             DataSet ds;
-            MySqlDataAdapter datos, datosUpdate;
+            SqlDataAdapter datos, datosUpdate;
             string cadenaSelect = "SELECT socID, socDNI, socDireccion, socTelefono FROM socio WHERE socDNI LIKE '" + name2 + "'";
             
-            MySqlConnection conexion = new MySqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+            SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
             conexion.Open();
-            MySqlCommand comando = new MySqlCommand(cadenaSelect, conexion);
+            SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
             lectorSelect = comando.ExecuteReader();
             if (lectorSelect.Read())
             {
