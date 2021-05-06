@@ -6,12 +6,15 @@ using System.Diagnostics;
 using System.IO;
 //Add MySql Library
 using MySql.Data.MySqlClient;
+using System.Data.Sql;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace ConnectCsharpToMysql
 {
     class DBConnect
     {
-        private MySqlConnection connection;
+        private SqlConnection connection;
         private string server;
         private string database;
         private string uid;
@@ -33,7 +36,7 @@ namespace ConnectCsharpToMysql
             string connectionString;
             connectionString = "SERVER=" + server + ";" + "DATABASE=" + database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
 
-            connection = new MySqlConnection(connectionString);
+            connection = new SqlConnection(connectionString);
         }
 
 
@@ -45,7 +48,7 @@ namespace ConnectCsharpToMysql
                 connection.Open();
                 return true;
             }
-            catch (MySqlException ex)
+            catch (SqlException ex)
             {
                 //When handling errors, you can your application's response based on the error number.
                 //The two most common error numbers when connecting are as follows:
@@ -73,7 +76,7 @@ namespace ConnectCsharpToMysql
                 connection.Close();
                 return true;
             }
-            catch (MySqlException ex)
+            catch (SqlException ex)
             {
                 MessageBox.Show(ex.Message);
                 return false;
@@ -89,7 +92,7 @@ namespace ConnectCsharpToMysql
             if (this.OpenConnection() == true)
             {
                 //create command and assign the query and connection from the constructor
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                SqlCommand cmd = new SqlCommand(query, connection);
                 
                 //Execute command
                 cmd.ExecuteNonQuery();
@@ -108,7 +111,7 @@ namespace ConnectCsharpToMysql
             if (this.OpenConnection() == true)
             {
                 //create mysql command
-                MySqlCommand cmd = new MySqlCommand();
+                SqlCommand cmd = new SqlCommand();
                 //Assign the query using CommandText
                 cmd.CommandText = query;
                 //Assign the connection using Connection
@@ -129,7 +132,7 @@ namespace ConnectCsharpToMysql
 
             if (this.OpenConnection() == true)
             {
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                SqlCommand cmd = new SqlCommand(query, connection);
                 cmd.ExecuteNonQuery();
                 this.CloseConnection();
             }
@@ -150,9 +153,9 @@ namespace ConnectCsharpToMysql
             if (this.OpenConnection() == true)
             {
                 //Create Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                SqlCommand cmd = new SqlCommand(query, connection);
                 //Create a data reader and Execute the command
-                MySqlDataReader dataReader = cmd.ExecuteReader();
+                SqlDataReader dataReader = cmd.ExecuteReader();
                 
                 //Read the data and store them in the list
                 while (dataReader.Read())
@@ -187,7 +190,7 @@ namespace ConnectCsharpToMysql
             if (this.OpenConnection() == true)
             {
                 //Create Mysql Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                SqlCommand cmd = new SqlCommand(query, connection);
 
                 //ExecuteScalar will return one value
                 Count = int.Parse(cmd.ExecuteScalar()+"");

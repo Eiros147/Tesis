@@ -57,7 +57,7 @@ namespace MultiFaceRec
             DataTable dtDatos;
             DataSet ds;
             SqlDataAdapter datos, datosUpdate;
-            SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+            SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
             conexion.Open();
             InitializeComponent();
             //Load haarcascades for face detection
@@ -175,7 +175,7 @@ namespace MultiFaceRec
                 DataTable dtDatos;
                 DataSet ds;
                 SqlDataAdapter datos, datosUpdate;
-                SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+                SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
                 conexion.Open();
                 SqlCommand cmd;
 
@@ -327,7 +327,7 @@ namespace MultiFaceRec
             SqlDataAdapter datos, datosUpdate;
             string cadenaSelect = "SELECT socID, socDNI, socDireccion, socTelefono FROM socio WHERE socDNI LIKE '" + name2 + "'";
             
-            SqlConnection conexion = new SqlConnection("server=localhost;user id=root;persistsecurityinfo=True;database=tesis; password=123456");
+            SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
             conexion.Open();
             SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
             lectorSelect = comando.ExecuteReader();

@@ -118,13 +118,13 @@ namespace PantallasFuncionales
 
             if (txtID.Text.Length > 0)
             {
-                string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM empleado Where empID Like '" + txtID.Text + "%'");
+                string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM Empleado Where empID Like '" + txtID.Text + "%'");
                 SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
             else if (txtNombre.Text.Length > 0)
             {
-                string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM empleado Where empNombre Like '" + txtNombre.Text + "%'");
+                string cadena = ("SELECT empID, empNombre, empApellido, empDireccion, empTelefono, empDNI, empRol FROM Empleado Where empNombre Like '" + txtNombre.Text + "%'");
                 SqlDataAdapter data = new SqlDataAdapter(cadena, conexion);
                 data.Fill(dtDatos);
             }
