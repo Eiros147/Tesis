@@ -194,15 +194,19 @@ namespace MultiFaceRec
                 //if (lector[1].ToString() == "")
                 if (lector.HasRows)
                         {
-                            string cadenaUpdate = ("UPDATE socio SET socDNI = '" + txtDNI.Text.ToString() + "', socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = '" + txtTelefono.Text.ToString() + "' WHERE socDni = '" + txtDNI.Text.ToString() + "'");
-                            cmd = new SqlCommand(cadenaUpdate, conexion);
-                            cmd.ExecuteNonQuery();
+                    string cadenaUpdate = ("UPDATE socio SET socDNI = " + txtDNI.Text.ToString() + ", socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = " + txtTelefono.Text.ToString() + " WHERE socDni = " + txtDNI.Text.ToString());
+                    cmd = new SqlCommand(cadenaUpdate, conexion);
+                    cmd.ExecuteNonQuery();
                         }
-                        else
-                        {                            
-                            string cadenaNuevo = ("INSERT INTO socio (socDNI, socNombre, socDireccion, socTelefono) VALUES('" + txtDNI.Text.ToString() + "','" + textBox1.Text.ToString() + "','" + txtDireccion.Text.ToString() + "','" + txtTelefono.Text.ToString() + "') WHERE socDni = '" + txtDNI.Text.ToString() + "'");
-                            cmd = new SqlCommand(cadenaNuevo, conexion);
-                            cmd.ExecuteNonQuery();
+                else
+                        {
+                    string query = "Select socID FROM socio WHERE socioDNI=" + txtDireccion.Text.ToString();
+                    comando = new SqlCommand(query, conexion);
+                    string temporal = comando.ExecuteScalar().ToString();
+
+                    string cadenaNuevo = ("INSERT INTO socio (socID, socDNI, socNombre, socDireccion, socTelefono, socEstado) VALUES(" + temporal + "," + txtDNI.Text.ToString() + ",'" + textBox1.Text.ToString() + "','" + txtDireccion.Text.ToString() + "'," + txtTelefono.Text.ToString() + "," + 1 + ")");
+                    cmd = new SqlCommand(cadenaNuevo, conexion);
+                    cmd.ExecuteNonQuery();
                         }
                 //}
 
