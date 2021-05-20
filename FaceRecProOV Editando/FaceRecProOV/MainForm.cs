@@ -363,12 +363,7 @@ namespace MultiFaceRec
                 lblDireccion.Text = lector["socDireccion"].ToString();
                 lblTelefono.Text = lector["socTelefono"].ToString();
             }
-            //else
-            //{
-            //    lbldni.Text = "";
-            //    lblDireccion.Text = "";
-            //    lblTelefono.Text = "";
-            //}
+      
             lectorSelect.Close();
             conexion.Close();
 
