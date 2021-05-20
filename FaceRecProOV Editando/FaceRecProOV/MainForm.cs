@@ -58,36 +58,53 @@ namespace MultiFaceRec
             DataSet ds;
             SqlDataAdapter datos, datosUpdate;
             SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
-            conexion.Open();
+            //conexion.Open();
             InitializeComponent();
+            
             //Load haarcascades for face detection
             face = new HaarCascade("haarcascade_frontalface_default.xml");
             //eye = new HaarCascade("haarcascade_eye.xml");
+
             try
             {
-                //Load of previus trainned faces and labels for each image
+                //Cargado imagenes previas y nombres
+                conexion.Open();
                 string Labelsinfo = File.ReadAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt");
                 string[] Labels = Labelsinfo.Split('%');
-                for (int i = 0; i < Labels.Length; i++)
+
+                NumLabels = Convert.ToInt16(Labels[0]);
+                ContTrain = NumLabels;
+                string LoadFaces;
+
+                for (int tf = 1; tf < NumLabels + 1; tf++)
                 {
-                    NumLabels = Convert.ToInt16(Labels[i]);
-                    ContTrain = NumLabels;
-                    string LoadFaces;
-
-                    string cadenaSelect = "SELECT * FROM socio WHERE socDNI = " + ContTrain;
-                    
-                    SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
-                    lectorPrimero = comando.ExecuteReader();
-                    if (lectorPrimero.Read())
-                    {
-
-                        LoadFaces = lectorPrimero["socDni"].ToString() + ".bmp";
-                        trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
-                        labels.Add(lectorPrimero["socDni"].ToString());
-                    }
-                    lectorPrimero.Close();
-                    conexion.Close();
+                    //Cargado de cada rostro
+                    LoadFaces = "face" + tf + ".bmp";
+                    trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
+                    labels.Add(Labels[tf]);
                 }
+
+                //for (int i = 0; i < Labels.Length; i++)
+                //{
+                //    NumLabels = Convert.ToInt16(Labels[i]);
+                //    ContTrain = NumLabels;
+                //    string LoadFaces;
+
+
+                //    string cadenaSelect = "SELECT * FROM socio WHERE socDNI = " + ContTrain;
+
+                //    SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
+                //    lectorPrimero = comando.ExecuteReader();
+                //    while (lectorPrimero.Read())
+                //    {
+
+                //        LoadFaces = lectorPrimero["socDni"].ToString() + ".bmp";
+                //        trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
+                //        labels.Add(lectorPrimero["socDni"].ToString());
+                //    }
+                //    lectorPrimero.Close();
+                //    conexion.Close();
+                //}
                 //for (int tf = 1; tf < NumLabels + 1; tf++)
                 //{
                 //    LoadFaces = tf + ".bmp";
@@ -101,7 +118,7 @@ namespace MultiFaceRec
             }
             catch (Exception e)
             {
-                //MessageBox.Show(e.ToString());
+                //Base de datos vacia
                 MessageBox.Show("Nothing in binary database, please add at least a face(Simply train the prototype with the Add Face Button).", "Triained faces load", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
@@ -119,10 +136,10 @@ namespace MultiFaceRec
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //Initialize the capture device
+            //Inicia el dispositivo de captura de imagen
             grabber = new Capture();
             grabber.QueryFrame();
-            //Initialize the FrameGraber event
+            //Inicia el evento FrameGrabber
             Application.Idle += new EventHandler(FrameGrabber);
             button1.Enabled = false;
         }
@@ -132,13 +149,13 @@ namespace MultiFaceRec
         {
             try
             {
-                //Trained face counter
+                //Contador de caras entrenadas
                 ContTrain = ContTrain + 1;
 
-                //Get a gray frame from capture device
+                //Obtener frame en escala de grises de la captura
                 gray = grabber.QueryGrayFrame().Resize(320, 240, Emgu.CV.CvEnum.INTER.CV_INTER_CUBIC);
 
-                //Face Detector
+                //Detector de rostros
                 MCvAvgComp[][] facesDetected = gray.DetectHaarCascade(
                 face,
                 1.2,
@@ -146,7 +163,7 @@ namespace MultiFaceRec
                 Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING,
                 new Size(20, 20));
 
-                //Action for each element detected
+                //Por cada elemento detectado
                 foreach (MCvAvgComp f in facesDetected[0])
                 {
                     TrainedFace = currentFrame.Copy(f.rect).Convert<Gray, byte>();
@@ -159,10 +176,10 @@ namespace MultiFaceRec
                 trainingImages.Add(TrainedFace);
                 labels.Add(textBox1.Text);
 
-                //Show face added in gray scale
+                //Mostrar rostro agregado en escala de grises
                 imageBox1.Image = TrainedFace;
 
-                //Write the number of triained faces in a file text for further load
+                //Escribir el número de caras entrenadas para futuras cargas
                 File.AppendAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt", txtDNI.Text.ToString() + "%" + Environment.NewLine);
 
                 
@@ -194,17 +211,19 @@ namespace MultiFaceRec
                 //if (lector[1].ToString() == "")
                 if (lector.HasRows)
                         {
-                    string cadenaUpdate = ("UPDATE socio SET socDNI = " + txtDNI.Text.ToString() + ", socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = " + txtTelefono.Text.ToString() + " WHERE socDni = " + txtDNI.Text.ToString());
+                    string query = "Select socID FROM socio WHERE socioDNI=" + txtDireccion.Text.ToString();
+                    comando = new SqlCommand(query, conexion);
+                    string temporal = comando.ExecuteScalar().ToString();
+
+                    string cadenaUpdate = ("UPDATE socio SET socDNI = " + txtDNI.Text.ToString() + ", socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = " + txtTelefono.Text.ToString() + " WHERE socID = " + temporal);
+                    MessageBox.Show(cadenaUpdate);
                     cmd = new SqlCommand(cadenaUpdate, conexion);
                     cmd.ExecuteNonQuery();
                         }
                 else
                         {
-                    string query = "Select socID FROM socio WHERE socioDNI=" + txtDireccion.Text.ToString();
-                    comando = new SqlCommand(query, conexion);
-                    string temporal = comando.ExecuteScalar().ToString();
-
-                    string cadenaNuevo = ("INSERT INTO socio (socID, socDNI, socNombre, socDireccion, socTelefono, socEstado) VALUES(" + temporal + "," + txtDNI.Text.ToString() + ",'" + textBox1.Text.ToString() + "','" + txtDireccion.Text.ToString() + "'," + txtTelefono.Text.ToString() + "," + 1 + ")");
+                    string cadenaNuevo = ("INSERT INTO socio (socNombre, socDireccion, socDNI, socTelefono, socEstado) VALUES(" + textBox1.Text.ToString() + ",'" + txtDireccion.Text.ToString() + "','" + txtDNI.Text.ToString() + "'," + txtTelefono.Text.ToString() + "," + 1 + ")");
+                    MessageBox.Show(cadenaNuevo);
                     cmd = new SqlCommand(cadenaNuevo, conexion);
                     cmd.ExecuteNonQuery();
                         }
@@ -224,11 +243,13 @@ namespace MultiFaceRec
                     conexion.Close();
                 //}
 
+                //Mesaje confirmación guardado
                 MessageBox.Show(textBox1.Text + "´s face detected and added :)", "Training OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
             {
-                MessageBox.Show("Enable the face detection first", "Training Fail", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                //Errores de activación de la camara y guardado de información
+                MessageBox.Show("Active la detección de rostros", "Entrenamiento Fallado", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
