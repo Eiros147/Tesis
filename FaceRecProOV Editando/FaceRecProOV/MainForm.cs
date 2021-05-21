@@ -45,20 +45,10 @@ namespace MultiFaceRec
 
         
         int selectedRow;
-        SqlCommandBuilder dtBuild;
-        
-        SqlDataReader lector, lectorPrimero, lectorSelect;
-
-        
-
-
+     
         public FrmPrincipal()
         {
-            DataTable dtDatos;
-            DataSet ds;
-            SqlDataAdapter datos, datosUpdate;
-            SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
-            //conexion.Open();
+            
             InitializeComponent();
             
             //Load haarcascades for face detection
@@ -68,7 +58,7 @@ namespace MultiFaceRec
             try
             {
                 //Cargado imagenes previas y nombres
-                conexion.Open();
+                
                 string Labelsinfo = File.ReadAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt");
                 string[] Labels = Labelsinfo.Split('%');
 
@@ -83,36 +73,6 @@ namespace MultiFaceRec
                     trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
                     labels.Add(Labels[tf]);
                 }
-
-                //for (int i = 0; i < Labels.Length; i++)
-                //{
-                //    NumLabels = Convert.ToInt16(Labels[i]);
-                //    ContTrain = NumLabels;
-                //    string LoadFaces;
-
-
-                //    string cadenaSelect = "SELECT * FROM socio WHERE socDNI = " + ContTrain;
-
-                //    SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
-                //    lectorPrimero = comando.ExecuteReader();
-                //    while (lectorPrimero.Read())
-                //    {
-
-                //        LoadFaces = lectorPrimero["socDni"].ToString() + ".bmp";
-                //        trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
-                //        labels.Add(lectorPrimero["socDni"].ToString());
-                //    }
-                //    lectorPrimero.Close();
-                //    conexion.Close();
-                //}
-                //for (int tf = 1; tf < NumLabels + 1; tf++)
-                //{
-                //    LoadFaces = tf + ".bmp";
-                //    trainingImages.Add(new Image<Gray, byte>(Application.StartupPath + "/TrainedFaces/" + LoadFaces));
-                //    labels.Add(Labels[tf]);
-
-
-                //}
 
 
             }
@@ -139,6 +99,7 @@ namespace MultiFaceRec
             //Inicia el dispositivo de captura de imagen
             grabber = new Capture();
             grabber.QueryFrame();
+
             //Inicia el evento FrameGrabber
             Application.Idle += new EventHandler(FrameGrabber);
             button1.Enabled = false;
@@ -182,69 +143,18 @@ namespace MultiFaceRec
                 //Escribir el número de caras entrenadas para futuras cargas
                 File.AppendAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt", txtDNI.Text.ToString() + "%" + Environment.NewLine);
 
-                
+
 
                 //Write the labels of triained faces in a file text for further load
-              //  for (int i = 1; i < trainingImages.ToArray().Length + 1; i++)
-                //{
+                for (int i = 1; i < trainingImages.ToArray().Length + 1; i++)
+                {
                     trainingImages.ToArray()[0].Save(Application.StartupPath + "/TrainedFaces/" + txtDNI.Text.ToString() + ".bmp");
-                   // File.AppendAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt", "\n" + labels.ToArray()[0] + "%");
-                DataTable dtDatos;
-                DataSet ds;
-                SqlDataAdapter datos, datosUpdate;
-                SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
-                conexion.Open();
-                SqlCommand cmd;
+                    File.AppendAllText(Application.StartupPath + "/TrainedFaces/TrainedLabels.txt", "\n" + labels.ToArray()[0] + "%");
+                }
 
-                string cadenaSelect = "SELECT socNombre FROM socio WHERE socDNI = '" + txtDNI.Text.ToString() + "'";
-                SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
-                lector = comando.ExecuteReader();
-                ////if (lector.Read())
-                ////{
-                //String vartempo = lector["socNombre"].ToString();
-                //lbltemporal.Text = vartempo;
-                //}
-
-                //while (lector.Read())
-                //{
-                //if(String.IsNullOrEmpty((string) lector.ToString()))
-                //if (lector[1].ToString() == "")
-                if (lector.HasRows)
-                        {
-                    string query = "Select socID FROM socio WHERE socioDNI=" + txtDireccion.Text.ToString();
-                    comando = new SqlCommand(query, conexion);
-                    string temporal = comando.ExecuteScalar().ToString();
-
-                    string cadenaUpdate = ("UPDATE socio SET socDNI = " + txtDNI.Text.ToString() + ", socNombre = '" + textBox1.Text.ToString() + "', socDireccion = '" + txtDireccion.Text.ToString() + "', socTelefono = " + txtTelefono.Text.ToString() + " WHERE socID = " + temporal);
-                    MessageBox.Show(cadenaUpdate);
-                    cmd = new SqlCommand(cadenaUpdate, conexion);
-                    cmd.ExecuteNonQuery();
-                        }
-                else
-                        {
-                    string cadenaNuevo = ("INSERT INTO socio (socNombre, socDireccion, socDNI, socTelefono, socEstado) VALUES(" + textBox1.Text.ToString() + ",'" + txtDireccion.Text.ToString() + "','" + txtDNI.Text.ToString() + "'," + txtTelefono.Text.ToString() + "," + 1 + ")");
-                    MessageBox.Show(cadenaNuevo);
-                    cmd = new SqlCommand(cadenaNuevo, conexion);
-                    cmd.ExecuteNonQuery();
-                        }
-                //}
-
-                //Agregar control existencia ID
-                //if(String.IsNullOrEmpty((string) lbltemporal.Contains("")) { 
-
-
-                //else
-
-                //string cadenaUpdate = ("UPDATE socio SET socDNI = '" + txtDNI + "', socNombre = '" + textBox1 + "', socDireccion = '" + txtDireccion + "', socTelefono = '" + txtTelefono + "' WHERE socID = '" + i + "'");
-                //dtBuild = new MySqlCommandBuilder(datos);
-                //cmd = new MySqlCommand(cadenaUpdate, conexion);
-                //cmd.ExecuteNonQuery();
-                lector.Close();
-                    conexion.Close();
-                //}
-
-                //Mesaje confirmación guardado
                 MessageBox.Show(textBox1.Text + "´s face detected and added :)", "Training OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+
             }
             catch
             {
@@ -334,38 +244,18 @@ namespace MultiFaceRec
                     }
                         t = 0;
 
-                        //Names concatenation of persons recognized
+                    //Concatenación de nombres de personas
                     for (int nnn = 0; nnn < facesDetected[0].Length; nnn++)
                     {
                         names = names + NamePersons[nnn] + ", ";
                     }
+
                     //Show the faces procesed and recognized
                     imageBoxFrameGrabber.Image = currentFrame;
                     label4.Text = names;
                     names = "";
                     //Clear the list(vector) of names
                     NamePersons.Clear();
-
-            
-            DataTable dtDatos;
-            DataSet ds;
-            SqlDataAdapter datos, datosUpdate;
-            string cadenaSelect = "SELECT socID, socDNI, socDireccion, socTelefono FROM socio WHERE socDNI LIKE '" + name2 + "'";
-            
-            SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-47369CL\\SEMINARIO;Initial Catalog=master;Integrated Security=True");
-            conexion.Open();
-            SqlCommand comando = new SqlCommand(cadenaSelect, conexion);
-            lectorSelect = comando.ExecuteReader();
-            if (lectorSelect.Read())
-            {
-                //label4.Text = lector["socNombre"].ToString();
-                lbldni.Text = lector["socDNI"].ToString();
-                lblDireccion.Text = lector["socDireccion"].ToString();
-                lblTelefono.Text = lector["socTelefono"].ToString();
-            }
-      
-            lectorSelect.Close();
-            conexion.Close();
 
 
         }
