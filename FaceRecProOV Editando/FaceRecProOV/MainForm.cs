@@ -51,9 +51,8 @@ namespace MultiFaceRec
             
             InitializeComponent();
             
-            //Load haarcascades for face detection
+            //Cargado de HaarCascades para detección de rostros
             face = new HaarCascade("haarcascade_frontalface_default.xml");
-            //eye = new HaarCascade("haarcascade_eye.xml");
 
             try
             {
@@ -77,8 +76,8 @@ namespace MultiFaceRec
             }
             catch (Exception e)
             {
-                //Base de datos vacia
-                MessageBox.Show("Nothing in binary database, please add at least a face(Simply train the prototype with the Add Face Button).", "Triained faces load", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                //Excepción "Base de datos vacia"
+                MessageBox.Show("Nada en la base de datos, por favor agregue un rostro", "Rostros entrenados cargados", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
         }
@@ -195,7 +194,7 @@ namespace MultiFaceRec
 
                         if (trainingImages.ToArray().Length != 0)
                         {
-                        //TermCriteria for face recognition with numbers of trained images like maxIteration
+                        //TermCriteria para reconocimiento facial con números de imagenes entrenadas como maxIteration
                         MCvTermCriteria termCrit = new MCvTermCriteria(ContTrain, 0.001);
 
                         //Reconocedor de rostros de Eigen 
@@ -217,28 +216,8 @@ namespace MultiFaceRec
                             NamePersons.Add("");
 
 
-                        //Set the number of faces detected on the scene
+                        //Establecer el número de caras detectadas
                         label3.Text = facesDetected[0].Length.ToString();
-                       
-                        /*
-                        //Set the region of interest on the faces
-                        
-                        gray.ROI = f.rect;
-                        MCvAvgComp[][] eyesDetected = gray.DetectHaarCascade(
-                           eye,
-                           1.1,
-                           10,
-                           Emgu.CV.CvEnum.HAAR_DETECTION_TYPE.DO_CANNY_PRUNING,
-                           new Size(20, 20));
-                        gray.ROI = Rectangle.Empty;
-
-                        foreach (MCvAvgComp ey in eyesDetected[0])
-                        {
-                            Rectangle eyeRect = ey.rect;
-                            eyeRect.Offset(f.rect.X, f.rect.Y);
-                            currentFrame.Draw(eyeRect, new Bgr(Color.Blue), 2);
-                        }
-                         */
 
                     }
                         t = 0;
@@ -249,11 +228,11 @@ namespace MultiFaceRec
                         names = names + NamePersons[nnn] + ", ";
                     }
 
-                    //Show the faces procesed and recognized
+                    //Mostrar las caras procesadas y reconocidas
                     imageBoxFrameGrabber.Image = currentFrame;
                     label4.Text = names;
                     names = "";
-                    //Clear the list(vector) of names
+                    //Limpiar la lista(vector) de nombres
                     NamePersons.Clear();
 
 
